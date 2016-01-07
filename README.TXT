@@ -14,6 +14,6 @@ HARDWARE:
  5) a few extra buttons will be added later.
 
 CHANGES TO ORIGINAL HARDWARE
-The arduino that is delivered with the X-Carve gets its power from the USB cable. With my GRBL controller, there is no USB cable, so you need to power the existing arduino externally (supply 8 volts to the Vin pin)
+The arduino that is delivered with the X-Carve gets its power from the USB cable. With my GCode Sender, there is no USB cable, so you need to power the other arduino externally (supply 8 volts to the Vin pin)
 
 Use at your own risk.
