@@ -1,6 +1,6 @@
-Arduino-GRBL-Controller 
+Arduino-GCode-Sender
 
-This is my GRBL controller.
+This is my Arduino GCode sender Sketch.
 
 I made this because I wanted to be able to use my X-Carve machine with a stand alone controller and be able to submit GCode files from an SD Card.
 
