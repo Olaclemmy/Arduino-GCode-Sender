@@ -357,13 +357,8 @@ byte filecount(){
 void setTextDisplay(String line1, String line2, String line3, String line4){
   /*
    This writes text to the display
-   It only updates the display if there is NEW information to display, this is to prevent flicker
   */
-  
-//  static String l1 ;
-//  if (line1+line2+line3+line4==l1) { 
-//    return;  // nothing new, return!
-//  } else {
+
     lcd.clear(); 
     lcd.setCursor(0, 0);
     lcd.print(line1);
@@ -372,9 +367,7 @@ void setTextDisplay(String line1, String line2, String line3, String line4){
     lcd.setCursor(0, 2);
     lcd.print(line3);
     lcd.setCursor(0, 3);
-    lcd.print(line4);        
- // }
- // l1=line1+line2+line3+line4;
+    lcd.print(line4);       
   
 }
 
