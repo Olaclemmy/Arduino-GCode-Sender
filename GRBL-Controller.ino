@@ -45,10 +45,10 @@ LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I
 // There are a few global varialbles
 char WposX[9];            // last known X pos on workpiece, space for 9 characters ( -999.999\0 )
 char WposY[9];            // last known Y pos on workpiece
-char WposZ[8];            // last known Z heighton workpiece, space for 8 characters is enough( -99.999\0 )
+char WposZ[9];            // last known Z heighton workpiece, space for 8 characters is enough( -99.999\0 )
 char MposX[9];            // last known X pos absolute to the machine
 char MposY[9];            // last known Y pos absolute to the machine
-char MposZ[8];            // last known Z height absolute to the machine
+char MposZ[9];            // last known Z height absolute to the machine
 
 char machineStatus[10]; // last know state (Idle, Run, Hold, Door, Home, Alarm, Check)
 unsigned long runningTime; // this will hold the timevalue when a carve job starts, so it can calculate the duration
