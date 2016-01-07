@@ -1,9 +1,9 @@
 /*
-GRBL Controller.
+GCode Sender.
 Hardware: Arduino Uno,
-          analog thumbstick (small joystick, with intgrated push button)
-      sd card reader with SPI interface,
-      a general 2x16 LCD display (for now)
+         ,analog thumbstick (small joystick, with intgrated push button)
+         ,sd card reader with SPI interface
+         ,a general 4x20 LCD display with i2c interface
 
 Limitations: It does not support directories on the SD card, only files in the root directory are supported.
       
@@ -13,14 +13,14 @@ MOSI - pin 11
 MISO - pin 12
 CLK - pin 13
 
-Thumbstick attached af follows:
+Joystick attached af follows:
 x value - pin A0
 y value - pin A1
 push button - pin 9
 NOTE: My joystick is mounted sideways so x = vertical, y = horizontal
 
 LCD Display
-the LCD display is connected to pins 2,3,4,5,6,7
+the LCD display is connected to pins A4 and A5 (default i2c connections)
 
 
 */
