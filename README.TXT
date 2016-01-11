@@ -17,3 +17,8 @@ CHANGES TO ORIGINAL HARDWARE
 The arduino that is delivered with the X-Carve gets its power from the USB cable. With my GCode Sender, there is no USB cable, so you need to power the other arduino externally (supply 8 volts to the Vin pin)
 
 Use at your own risk.
+
+
+Update January 11, 2016:
+When I started using this for a real project, I found some issues. The display would not behave as it should and I was missing some 'ok' signals in the serial communication.
+It took me a few hours but I think I have found and fixed the issues.
