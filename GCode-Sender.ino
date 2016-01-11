@@ -70,15 +70,12 @@ void setup() {
   }   
  
   // Ask to connect (you might still use a computer and NOT connect this controller)
-  
-  runningTime=millis();
-
   setTextDisplay("",F("      Connect?    "),"","");
   while (digitalRead(joystick_switch)) {}  // wait for the button to be pressed
   delay(50);
   // serial connection
   Serial.begin(115200);
-  while (!digitalRead(joystick_switch)) {}  // wait for the button to be release
+  while (!digitalRead(joystick_switch)) {}  // be sure the button is released before we continue
   delay(50);
   fileMenu();    
 }
@@ -121,7 +118,6 @@ void fileMenu() {
       }
     }
 
- 
   
     if (fileindex > 0 && digitalRead(joystick_switch)==LOW && fn!="") {    // Pushed it!    
        
@@ -142,15 +138,12 @@ void fileMenu() {
          setTextDisplay(F("Files ")," -> " + fn,"",F("Click to select"));
      }
      
-    // joystick to right exits this menu and joystick_switchitches to MOVE menu    
+    // joystick to right exits this menu and joystick_switches to MOVE menu    
     if (yval > 900) { // full right!
        waitForJoystickMid();
        moveMenu();    
        setTextDisplay(F("Files ")," -> " + fn,"",F("Click to select"));             
        }
-
-         
-
    }   
 }
 
@@ -196,9 +189,6 @@ void moveMenu(){
   return;   
 }
   
-  
-
-
 void xyzMove(int moveAxis)  {
   /*
   This procedure enables us to move the X-Carve with the joystick.
@@ -213,7 +203,6 @@ void xyzMove(int moveAxis)  {
 
   If the joystick is returned to the mid position while the machine is still moving, I send the feed hold command (!) and then
   clear the command buffer by soft sending the reset signal, then I reset the position again with G92 X0 Y0 Z0.
-  
   
   */
   
@@ -361,7 +350,6 @@ void setTextDisplay(String line1, String line2, String line3, String line4){
   /*
    This writes text to the display
   */
-
     lcd.clear(); 
     lcd.print(line1.substring(0,19));
     lcd.setCursor(0, 1);
@@ -450,6 +438,10 @@ void sendFile(String filename){
 }
 
 void updateDisplayStatus(){
+  /*
+   I had some issues with updating the display while carving a file
+   I created this extra void, just to update the display while carving.
+  */
   getStatus();
   lcd.clear();
   lcd.print(machineStatus);
@@ -611,6 +603,7 @@ void getStatus(){
   char character;
   int index=0;
   bool completeMessage=false;
+  
   checkForOk();
 
   Serial.print("?");  // Ask the machine status
