@@ -122,9 +122,9 @@ void fileMenu() {
     if (fileindex > 0 && digitalRead(joystick_switch)==LOW && fn!="") {    // Pushed it!    
        
        setTextDisplay(F("Send this file? ")," -> " + fn,"",F("Click to confirm"));  // Ask for confirmation
-       delay(10);
+       delay(50);
        while (digitalRead(joystick_switch)==LOW) {} // Wait for the button to be released
-       delay(10);
+       delay(50);
 
        unsigned long t = millis();
        while (millis()-t <= 1500UL) {
