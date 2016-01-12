@@ -563,14 +563,11 @@ String ignoreUnsupportedCommands(String lineOfCode){
 
 void checkForOk() {
   // read the receive buffer (if anything to read)
-  char content,lastcontent;
-  byte index=0;
-
-  while (Serial.available()) {
-    content = Serial.read();    
-    if (index>0) {if (content=='k' && lastcontent=='o') {awaitingOK=false;}}
-    lastcontent=content;
-    index++;    
+  char c,lastc;
+   while (Serial.available()) {
+    c = Serial.read();    
+    if (lastc=='o' && c=='k') {awaitingOK=false;}
+    lastc=c;
     delay(1);     
     }
 }
