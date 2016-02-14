@@ -72,11 +72,11 @@ void setup() {
   // Ask to connect (you might still use a computer and NOT connect this controller)
   setTextDisplay("",F("      Connect?    "),"","");
   while (digitalRead(joystick_switch)) {}  // wait for the button to be pressed
-  delay(10);
+  delay(50);
   // serial connection
   Serial.begin(115200);
-  while (!digitalRead(joystick_switch)) {}  // wait for the button to be release
-  delay(10);
+  while (!digitalRead(joystick_switch)) {}  // be sure the button is released before we continue
+  delay(50);
   fileMenu();    
 }
 
@@ -118,14 +118,13 @@ void fileMenu() {
       }
     }
 
- 
   
     if (fileindex > 0 && digitalRead(joystick_switch)==LOW && fn!="") {    // Pushed it!    
        
        setTextDisplay(F("Send this file? ")," -> " + fn,"",F("Click to confirm"));  // Ask for confirmation
-       delay(10);
+       delay(50);
        while (digitalRead(joystick_switch)==LOW) {} // Wait for the button to be released
-       delay(10);
+       delay(50);
 
        unsigned long t = millis();
        while (millis()-t <= 1500UL) {
@@ -139,15 +138,12 @@ void fileMenu() {
          setTextDisplay(F("Files ")," -> " + fn,"",F("Click to select"));
      }
      
-    // joystick to right exits this menu and joystick_switchitches to MOVE menu    
+    // joystick to right exits this menu and joystick_switches to MOVE menu    
     if (yval > 900) { // full right!
        waitForJoystickMid();
        moveMenu();    
        setTextDisplay(F("Files ")," -> " + fn,"",F("Click to select"));             
        }
-
-         
-
    }   
 }
 
@@ -193,9 +189,6 @@ void moveMenu(){
   return;   
 }
   
-  
-
-
 void xyzMove(int moveAxis)  {
   /*
   This procedure enables us to move the X-Carve with the joystick.
@@ -210,7 +203,6 @@ void xyzMove(int moveAxis)  {
 
   If the joystick is returned to the mid position while the machine is still moving, I send the feed hold command (!) and then
   clear the command buffer by soft sending the reset signal, then I reset the position again with G92 X0 Y0 Z0.
-  
   
   */
   
@@ -358,16 +350,14 @@ void setTextDisplay(String line1, String line2, String line3, String line4){
   /*
    This writes text to the display
   */
-
     lcd.clear(); 
-    lcd.setCursor(0, 0);
-    lcd.print(line1);
+    lcd.print(line1.substring(0,19));
     lcd.setCursor(0, 1);
-    lcd.print(line2);
+    lcd.print(line2.substring(0,19));
     lcd.setCursor(0, 2);
-    lcd.print(line3);
+    lcd.print(line3.substring(0,19));
     lcd.setCursor(0, 3);
-    lcd.print(line4);       
+    lcd.print(line4.substring(0,19));       
   
 }
 
@@ -392,10 +382,10 @@ void sendFile(String filename){
     }
 
    // Set the Work Position to zero
-  clearRXBuffer();
+  
   sendCodeLine(F("G21"));
   sendCodeLine(F("G92 X0 Y0 Z0"));  // set zero
-
+  clearRXBuffer();
   // reset the timer
   runningTime = millis();
   
@@ -410,15 +400,9 @@ void sendFile(String filename){
     }
 
     // get the status of the machine and monitor the receive buffer for OK signals
-    if (millis() - lastUpdate >= 250) {
-      getStatus();
+    if (millis() - lastUpdate >= 250) {      
       lastUpdate=millis();  
-      finalTime = getTime();          
-      String sl1= (String)machineStatus + ' ' + finalTime;           
-      String sl2="         X: " + (String)WposX;
-      String sl3="         Y: " + (String)WposY;
-      String sl4="         Z: " + (String)WposZ;
-      setTextDisplay(sl1,sl2,sl3,sl4);  
+      updateDisplayStatus();          
     }
     
   }
@@ -433,14 +417,14 @@ void sendFile(String filename){
    while (strcmp (machineStatus,"Idle") != 0) {
      delay(250);
      getStatus();
+     updateDisplayStatus();          
    }
    // Now it is done.
    
    sendCodeLine(F("G0 Z 0 "));  // return Z to zero    
-   delay(1000);  
-   getStatus();
-   delay(200);
-   setTextDisplay("Idle " + finalTime, " click   X: " + (String)WposX,"  to     Y: " + (String)WposY," finish  Z: " + (String)WposZ);     
+   delay(1200);     
+   
+   setTextDisplay("Idle " + getTime(),""," click  to finish ","");     
    while (digitalRead(joystick_switch)==HIGH) {} // Wait for the button to be pressed
    delay(50);
    while (digitalRead(joystick_switch)==LOW) {} // Wait for the button to be released
@@ -453,6 +437,23 @@ void sendFile(String filename){
    return; 
 }
 
+void updateDisplayStatus(){
+  /*
+   I had some issues with updating the display while carving a file
+   I created this extra void, just to update the display while carving.
+  */
+  getStatus();
+  lcd.clear();
+  lcd.print(machineStatus);
+  lcd.print(" ");
+  lcd.print(getTime());
+  lcd.setCursor(0, 1);
+  lcd.print("         X: ");  lcd.print(WposX);
+  lcd.setCursor(0, 2);
+  lcd.print("         Y: ");  lcd.print(WposY);
+  lcd.setCursor(0, 3);
+  lcd.print("         Z: ");  lcd.print(WposZ);
+  }
 
 void resetSDReader() {
   /* 
@@ -499,8 +500,8 @@ String getTime(){
   sprintf(p,"%02d",S);
   strcat(timeString,p);
   
-  timeString[9]= '\0';
-  return String(timeString);  
+  timeString[8]= '\0';
+  return timeString;  
 }
 
 void sendCodeLine(String lineOfCode ){
@@ -512,7 +513,7 @@ void sendCodeLine(String lineOfCode ){
     We continue to monitor the rx buffer for the 'ok' signal in the getStatus() procedure.
   */
   
-  clearRXBuffer();
+  // clearRXBuffer();
   Serial.println(lineOfCode);
   // wait for one second for the ok response
   awaitingOK = true;  
@@ -548,6 +549,8 @@ String ignoreUnsupportedCommands(String lineOfCode){
   lineOfCode.replace(F("M9")," ");  // ignore coolant control
   lineOfCode.replace(F("M10")," "); // ignore vacuum, pallet clamp
   lineOfCode.replace(F("M11")," "); // ignore vacuum, pallet clamp
+  lineOfCode.replace(F("M5")," "); // ignore spindle off
+  lineOfCode.replace(F("M2 "),"M5 M2 "); // Shut down spindle on program end.
   
   // Ignore comment lines 
   // Ignore tool commands, I do not support tool changers
@@ -560,13 +563,11 @@ String ignoreUnsupportedCommands(String lineOfCode){
 
 void checkForOk() {
   // read the receive buffer (if anything to read)
-  char content[70];
-  byte index;
-
-  while (Serial.available()) {
-    content[index] = Serial.read();    
-    if (content[index]=='k' && content[index-1]=='o') {awaitingOK=false;}
-    index++;    
+  char c,lastc;
+   while (Serial.available()) {
+    c = Serial.read();    
+    if (lastc=='o' && c=='k') {awaitingOK=false;}
+    lastc=c;
     delay(1);     
     }
 }
@@ -599,6 +600,7 @@ void getStatus(){
   char character;
   int index=0;
   bool completeMessage=false;
+  
   checkForOk();
 
   Serial.print("?");  // Ask the machine status
@@ -606,20 +608,22 @@ void getStatus(){
   while (Serial.available()) {
     content[index] = Serial.read();  
     if (content[index] =='>') completeMessage=true; // a simple check to see if the message is complete
+    if (index>0) {if (content[index]=='k' && content[index-1]=='o') {awaitingOK=false;}}
     index++;
     delay(1); 
     }
   content[index] ='\0';
  
-  if (!completeMessage) return;
-    
+  if (!completeMessage) { return; }   
+   
   // get the machine status
-  int endpos = strchr(content,',')-content-1;
-  memcpy(machineStatus,&content[1],endpos  );
-  machineStatus[endpos]='\0';
+  int startpos =  strchr(content,'<')-content+1;
+  int endpos = strchr(&content[startpos],',')-content;
+  memcpy(machineStatus,&content[1],endpos-1  );
+  machineStatus[endpos-1]='\0';
  
   // get MposX, using memcpy to be memory efficient.
-  int startpos =  strchr(content,':')-content+1;
+  startpos =  strchr(content,':')-content+1;
   endpos = strchr(&content[startpos],',')-content;
   memcpy(MposX,&content[startpos],endpos-startpos  );
   MposX[endpos-startpos]='\0';
@@ -654,16 +658,6 @@ void getStatus(){
   memcpy( WposZ,&content[startpos],endpos-startpos  );
   WposZ[endpos-startpos]='\0';
 
-   
-  if (strcmp (machineStatus,"Idle") == 0 && awaitingOK){
-    /*
-     In theory this bit of code never fires
-     Because the machine can not be idle while we wait for ok at the same time
-     But if it does happen, we must have missed the ok signal somewhere.         
-    */     
-    awaitingOK=false;  
-    strcpy (machineStatus,"Run");
-  }
 
 }
 
@@ -672,3 +666,4 @@ void loop() {
   setTextDisplay(F("You Failed!,"),F("  Press Reset!"),"","");  
   delay(1000);
 }
+
