@@ -22,3 +22,8 @@ Use at your own risk.
 Update January 11, 2016:
 When I started using this for a real project, I found some issues. The display would not behave as it should and I was missing some 'ok' signals in the serial communication.
 It took me a few hours but I think I have found and fixed the issues.
+
+Update January 6, 2017:
+A year has gone by :o), I have updated the sketch, 
+It looks like the Arduino Uno is running out of memory some times.
+I simplyfied the getStatus void a lot, removed a lot of string operations, that should save memory.
