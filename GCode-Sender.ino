@@ -656,7 +656,8 @@ void getStatus(){
   char character;
   byte index=0;
   bool completeMessage=false;
-  
+  int i=0;
+  int c=0;
   checkForOk();
 
   Serial.print(F("?"));  // Ask the machine status
@@ -668,53 +669,25 @@ void getStatus(){
     index++;
     delay(1); 
     }
-  content[index] ='\0';
- 
+  
   if (!completeMessage) { return; }   
-   
-  // get the machine status
-  int startpos =  strchr(content,'<')-content+1;
-  int endpos = strchr(&content[startpos],',')-content;
-  memcpy(machineStatus,&content[1],endpos-1  );
-  machineStatus[endpos-1]='\0';
- 
-  // get MposX, using memcpy to be memory efficient.
-  startpos =  strchr(content,':')-content+1;
-  endpos = strchr(&content[startpos],',')-content;
-  memcpy(MposX,&content[startpos],endpos-startpos  );
-  MposX[endpos-startpos]='\0';
-
-  // get MposY, using memcpy to be memory efficient.
-  startpos =  strchr(&content[endpos],',')-content+1;
-  endpos = strchr(&content[startpos],',')-content;
-  memcpy(MposY,&content[startpos],endpos-startpos  );
-  MposY[endpos-startpos]='\0';
-
-  //get MposZ, using memcpy to be memory efficient.
-  startpos =  strchr(&content[endpos],',')-content+1;
-  endpos = strchr(&content[startpos],',')-content;
-  memcpy(MposZ,&content[startpos],endpos-startpos  );
-  MposZ[endpos-startpos]='\0';
-
-  //get WposX, using memcpy to be memory efficient.
-  startpos =  strchr(&content[endpos],':')-content+1;
-  endpos = strchr(&content[startpos],',')-content;
-  memcpy( WposX,&content[startpos],endpos-startpos  );
-  WposX[endpos-startpos]='\0';
-
-  //get WposY, using memcpy to be memory efficient.
-  startpos =  strchr(&content[endpos],',')-content+1;
-  endpos = strchr(&content[startpos],',')-content;
-  memcpy( WposY,&content[startpos],endpos-startpos  );
-  WposY[endpos-startpos]='\0';
-
-  //get WposZ, using memcpy to be memory efficient.
-  startpos =  strchr(&content[endpos],',')-content+1;
-  endpos = strchr(&content[startpos],'>')-content;
-  memcpy( WposZ,&content[startpos],endpos-startpos  );
-  WposZ[endpos-startpos]='\0';
-
-
+  
+  i++;
+  while (c<9 && content[i] !=',') {machineStatus[c++]=content[i++]; machineStatus[c]=0; } // get the machine status
+  while (content[i++] != ':') ; // skip until the first ':'
+  c=0;
+  while (c<8 && content[i] !=',') { MposX[c++]=content[i++]; MposX[c] = 0;} // get MposX
+  c=0; i++;
+  while (c<8 && content[i] !=',') { MposY[c++]=content[i++]; MposY[c] = 0;} // get MposY
+  c=0; i++;
+  while (c<8 && content[i] !=',') { MposZ[c++]=content[i++]; MposZ[c] = 0;} // get MposZ
+  while (content[i++] != ':') ; // skip until the next ':'
+  c=0;
+  while (c<8 && content[i] !=',') { WposX[c++]=content[i++]; WposX[c] = 0;} // get WposX
+  c=0; i++;
+  while (c<8 && content[i] !=',') { WposY[c++]=content[i++]; WposY[c] = 0;} // get WposY
+  c=0; i++;
+  while (c<8 && content[i] !='>') { WposZ[c++]=content[i++]; WposZ[c] = 0;} // get WposZ
 }
 
 void loop() {  
