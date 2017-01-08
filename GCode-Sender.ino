@@ -316,26 +316,12 @@ void moveMenu(){
       
     if (updateDisplay) {
       updateDisplay = false;
-      strcpy(sln1,"X: ");
-      strcat(sln1,MposX);
-      strcat(sln1,'\0');
-      
-      strcpy(sln2,"Y: ");
-      strcat(sln2,MposY);
-      strcat(sln2,'\0');
-      
-      strcpy(sln3,"Z: ");
-      strcat(sln3,MposZ);
-      strcat(sln4,'\0');
-      
-      strcpy(sln4,"Click stick to exit");
-      strcat(sln4,'\0');
-      
-      strcpy(slb,MposX);
-      strcat(slb,MposY);
-      strcat(slb,MposZ);
-      strcat(slb,'\0');
-      
+      sprintf(sln1,"X: %s\0",MposX);
+      sprintf(sln2,"Y: %s\0",MposY);
+      sprintf(sln3,"Z: %s\0",MposZ);
+      sprintf(sln4,"Click stick to exit\0");
+      sprintf(slb,"%s %s %s\0",MposX,MposY,MposZ);
+            
       if (sla != slb) {
         setTextDisplay(sln1,sln2,sln3,sln4);        
         strcpy(sla,slb);
