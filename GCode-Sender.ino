@@ -515,17 +515,7 @@ void updateDisplayStatus(unsigned long runtime){
   M = floor(t/60);
   S = t - (M * 60);
 
-  sprintf(p,"%02d",H);
-  strcpy(timeString,p);
-  strcat(timeString,":");
-
-  sprintf(p,"%02d",M);
-  strcat(timeString,p);
-  strcat(timeString,":");
-  
-  sprintf(p,"%02d",S);
-  strcat(timeString,p);
-  
+  sprintf (timeString,"%02d:%02d:%02d",H,M,S);
   timeString[8]= '\0';
   
   getStatus();
