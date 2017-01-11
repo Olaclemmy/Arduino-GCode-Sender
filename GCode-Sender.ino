@@ -84,11 +84,11 @@ bool awaitingOK = false;   // this is set true when we are waiting for the ok si
 
 void setup() {
   // inputs (write high to enable pullup)
-  pinMode(joystick_switch,INPUT); digitalWrite(joystick_switch,HIGH);
-  pinMode(Msw12,INPUT);digitalWrite(Msw12,HIGH); 
-  pinMode(Msw3,INPUT); digitalWrite(Msw3,HIGH);
-  pinMode(Msw6,INPUT); digitalWrite(Msw6,HIGH);
-  pinMode(Msw9,INPUT); digitalWrite(Msw9,HIGH);
+  pinMode(joystick_switch,INPUT_PULLUP);
+  pinMode(Msw12,INPUT_PULLUP);
+  pinMode(Msw3,INPUT_PULLUP);
+  pinMode(Msw6,INPUT_PULLUP);
+  pinMode(Msw9,INPUT_PULLUP); 
   digitalWrite(resetpin,HIGH);
   pinMode(resetpin,OUTPUT);
   // display 
@@ -158,8 +158,7 @@ byte fileMenu() {
       fn= getFileName(fileindex);
       lcd.setCursor(0, 1);
       lcd.print(F(" -> ")); lcd.print(fn);
-      waitForJoystickMid();
-      
+      waitForJoystickMid();     
       }
       
     if (xval > 900) { // joystick up!
